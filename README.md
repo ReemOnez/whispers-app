@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/screenshots/cover.png" alt="Whispers App Cover" width="100%"/>
+<img src="assets/cover.png" alt="Whispers App Cover" width="100%"/>
 
 # Whispers 🤍
 ### *say what you never could*
