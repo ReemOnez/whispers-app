@@ -57,7 +57,7 @@ abstract final class AppTheme {
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
           ),
-          minimumSize: const Size(double.infinity, 56),
+          minimumSize: const Size(double.infinity, 48),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.brFull),
           elevation: 0,
         ).copyWith(
@@ -77,14 +77,14 @@ abstract final class AppTheme {
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
           ),
-          minimumSize: const Size(double.infinity, 56),
+          minimumSize: const Size(double.infinity, 48),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.brFull),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surfaceContainerLow, // Inner Sanctum feel
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         hintStyle: AppTextStyles.placeholder.copyWith(color: AppColors.ghostText.withOpacity(0.5)),
         labelStyle: AppTextStyles.bodyMd.copyWith(color: AppColors.ghostText),
         border: const UnderlineInputBorder(

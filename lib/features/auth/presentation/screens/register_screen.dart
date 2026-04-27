@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -36,91 +37,134 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     });
 
     return Scaffold(
-      // Serene Morning Sky Background
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF86A8E7), // Morning sky blue
-              Color(0xFFD1B2FF), // Soft lavender horizon
-              AppColors.theVoid, // Fading into Nocturne theme at bottom
-            ],
-            stops: [0.0, 0.5, 1.0],
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: Text('A New Dawn', style: AppTextStyles.headlineMd.copyWith(color: AppColors.onSurface)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.onSurface),
+      ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Gentle Light Background Image
+          Image.asset(
+            'assets/images/auth_bg.png',
+            fit: BoxFit.cover,
           ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppSpacing.containerPadding),
-              child: Container(
-                padding: const EdgeInsets.all(AppSpacing.containerPadding),
-                decoration: BoxDecoration(
-                  color: AppColors.innerSanctum.withOpacity(0.85),
+          
+          // Form Content
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.stackGap),
+                child: ClipRRect(
                   borderRadius: AppRadius.brLg,
-                  border: Border.all(color: AppColors.etherealLavender.withOpacity(0.3)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.theVoid.withOpacity(0.5),
-                      blurRadius: 30,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'A New Dawn',
-                      style: AppTextStyles.headlineMd.copyWith(color: AppColors.onSurface),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppSpacing.xxl),
-                    
-                    if (authState.error != null) ...[
-                      Text(authState.error!, style: AppTextStyles.bodyMd.copyWith(color: AppColors.error), textAlign: TextAlign.center),
-                      const SizedBox(height: AppSpacing.stackGap),
-                    ],
-
-                    TextField(
-                      controller: _userCtrl,
-                      decoration: const InputDecoration(labelText: 'Alias', hintText: 'Ghost'),
-                    ),
-                    const SizedBox(height: AppSpacing.stackGap),
-                    TextField(
-                      controller: _emailCtrl,
-                      decoration: const InputDecoration(labelText: 'Email', hintText: 'ghost@void.com'),
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    const SizedBox(height: AppSpacing.stackGap),
-                    TextField(
-                      controller: _passCtrl,
-                      decoration: const InputDecoration(labelText: 'Password', hintText: '••••••'),
-                      obscureText: true,
-                    ),
-                    const SizedBox(height: AppSpacing.xl),
-
-                    if (authState.isLoading)
-                      const Center(child: CircularProgressIndicator(color: AppColors.primaryContainer))
-                    else
-                      FilledButton(
-                        onPressed: () => ref.read(authProvider.notifier).register(_emailCtrl.text, _userCtrl.text, _passCtrl.text),
-                        child: const Text('Begin'),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                    child: Container(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.4),
+                        borderRadius: AppRadius.brLg,
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
                       ),
-                      
-                    const SizedBox(height: AppSpacing.stackGap),
-                    TextButton(
-                      onPressed: () => context.pop(),
-                      child: Text('Return to the Void', style: AppTextStyles.bodyMd.copyWith(color: AppColors.onSurfaceVariant)),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'Begin your journey', 
+                            style: AppTextStyles.headlineMd.copyWith(
+                              color: AppColors.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ), 
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+                          
+                          if (authState.error != null) ...[
+                            Text(
+                              authState.error!, 
+                              style: AppTextStyles.bodyMd.copyWith(color: AppColors.error), 
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: AppSpacing.stackGap),
+                          ],
+
+                          // Fields Wrapper for Theme override
+                          Theme(
+                            data: Theme.of(context).copyWith(
+                              inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
+                                fillColor: Colors.black.withValues(alpha: 0.6),
+                                labelStyle: AppTextStyles.bodyMd.copyWith(color: AppColors.onSurface.withValues(alpha: 0.6)),
+                                hintStyle: AppTextStyles.placeholder.copyWith(color: AppColors.onSurface.withValues(alpha: 0.4)),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                TextField(
+                                  controller: _userCtrl,
+                                  style: AppTextStyles.bodyLg.copyWith(color: AppColors.onSurface),
+                                  decoration: const InputDecoration(labelText: 'Alias', hintText: 'Ghost'),
+                                ),
+                                const SizedBox(height: AppSpacing.stackGap),
+                                TextField(
+                                  controller: _emailCtrl,
+                                  style: AppTextStyles.bodyLg.copyWith(color: AppColors.onSurface),
+                                  decoration: const InputDecoration(labelText: 'Email', hintText: 'ghost@void.com'),
+                                  keyboardType: TextInputType.emailAddress,
+                                ),
+                                const SizedBox(height: AppSpacing.stackGap),
+                                TextField(
+                                  controller: _passCtrl,
+                                  style: AppTextStyles.bodyLg.copyWith(color: AppColors.onSurface),
+                                  decoration: const InputDecoration(labelText: 'Password', hintText: '••••••'),
+                                  obscureText: true,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.xl),
+
+                          if (authState.isLoading)
+                            const Center(child: CircularProgressIndicator(color: AppColors.primaryContainer))
+                          else
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sectionGap),
+                              child: FilledButton(
+                                onPressed: () => ref.read(authProvider.notifier).register(_emailCtrl.text, _userCtrl.text, _passCtrl.text),
+                                child: const Text('Begin'),
+                              ),
+                            ),
+                            
+                          const SizedBox(height: AppSpacing.stackGap),
+                          TextButton(
+                            onPressed: () => context.pop(),
+                            child: Text(
+                              'Return to the Void', 
+                              style: AppTextStyles.bodyMd.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
