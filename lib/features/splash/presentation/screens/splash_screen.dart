@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _animController.forward();
 
     Future.delayed(AppConstants.splashDuration, () {
-      if (mounted) context.go(AppRoutes.login);
+      if (mounted) context.go(AppRoutes.onboarding);
     });
   }
 

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../constants/app_routes.dart';
 
 import '../../features/splash/presentation/screens/splash_screen.dart';
+import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/providers/auth_notifier.dart';
@@ -28,15 +29,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final isSplash = state.matchedLocation == AppRoutes.splash;
       final isLogin = state.matchedLocation == AppRoutes.login;
       final isRegister = state.matchedLocation == AppRoutes.register;
+      final isOnboarding = state.matchedLocation == AppRoutes.onboarding;
       
       // Let splash play out first, it handles its own nav
       if (isSplash) return null;
 
-      if (!isAuth && !isLogin && !isRegister) {
-        return AppRoutes.login;
+      if (!isAuth && !isLogin && !isRegister && !isOnboarding) {
+        return AppRoutes.onboarding;
       }
       
-      if (isAuth && (isLogin || isRegister)) {
+      if (isAuth && (isLogin || isRegister || isOnboarding)) {
         return AppRoutes.home;
       }
 
@@ -46,6 +48,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.splash,
         builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.onboarding,
+        builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(
         path: AppRoutes.login,
