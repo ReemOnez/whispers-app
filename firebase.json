@@ -1,0 +1,41 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "whispers-app-a5e82",
+          "appId": "1:107743385203:android:d10d3b3371256f9f473c06",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "whispers-app-a5e82",
+          "appId": "1:107743385203:ios:a9a10d021b4c8c35473c06",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "whispers-app-a5e82",
+          "appId": "1:107743385203:ios:a9a10d021b4c8c35473c06",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "whispers-app-a5e82",
+          "configurations": {
+            "android": "1:107743385203:android:d10d3b3371256f9f473c06",
+            "ios": "1:107743385203:ios:a9a10d021b4c8c35473c06",
+            "macos": "1:107743385203:ios:a9a10d021b4c8c35473c06",
+            "web": "1:107743385203:web:627f705061cb6702473c06",
+            "windows": "1:107743385203:web:ef89b13cb71bdfcf473c06"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "107743385203",
+    "project_id": "whispers-app-a5e82",
+    "storage_bucket": "whispers-app-a5e82.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107743385203:android:d10d3b3371256f9f473c06",
+        "android_client_info": {
+          "package_name": "com.example.whispres_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrUHX3NSrYRxWft_q2wxNMnXFPs1o4UGc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
