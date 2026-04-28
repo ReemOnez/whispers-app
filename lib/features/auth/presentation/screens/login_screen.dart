@@ -16,11 +16,13 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+  final _visibleText = ValueNotifier(false);
 
   @override
   void dispose() {
     _emailCtrl.dispose();
     _passCtrl.dispose();
+    _visibleText.dispose();
     super.dispose();
   }
 
@@ -116,8 +118,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             child: TextField(
                               controller: _passCtrl,
                               style: AppTextStyles.bodyLg.copyWith(color: AppColors.onSurface),
-                              decoration: const InputDecoration(labelText: 'Password', hintText: '••••••'),
-                              obscureText: true,
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                hintText: '••••••',
+                                suffixIcon: IconButton(
+                                  icon: Icon(_visibleText.value ? Icons.visibility : Icons.visibility_off, color: AppColors.primary),
+                                  onPressed: () {
+                                    setState(() {
+                                      _visibleText.value = !_visibleText.value;
+                                    });
+                                  },
+                                ),
+                              ),
+                              obscureText: !_visibleText.value,
                             ),
                           ),
                           const SizedBox(height: AppSpacing.xl),

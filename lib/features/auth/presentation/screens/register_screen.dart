@@ -17,12 +17,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _emailCtrl = TextEditingController();
   final _userCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+  final _visibleText = ValueNotifier(false);
 
   @override
   void dispose() {
     _emailCtrl.dispose();
     _userCtrl.dispose();
     _passCtrl.dispose();
+    _visibleText.dispose();
     super.dispose();
   }
 
@@ -48,11 +50,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         fit: StackFit.expand,
         children: [
           // Gentle Light Background Image
-          Image.asset(
-            'assets/images/auth_bg.png',
-            fit: BoxFit.cover,
-          ),
-          
+          Image.asset('assets/images/auth_bg.png', fit: BoxFit.cover),
+
           // Form Content
           SafeArea(
             child: Center(
@@ -68,32 +67,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         color: Colors.black.withValues(alpha: 0.4),
                         borderRadius: AppRadius.brLg,
                         border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
+                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))],
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Text(
-                            'Begin your journey', 
-                            style: AppTextStyles.headlineMd.copyWith(
-                              color: AppColors.onSurface,
-                              fontWeight: FontWeight.w600,
-                            ), 
+                            'Begin your journey',
+                            style: AppTextStyles.headlineMd.copyWith(color: AppColors.onSurface, fontWeight: FontWeight.w600),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: AppSpacing.lg),
-                          
+
+                          // Handle error message
                           if (authState.error != null) ...[
                             Text(
-                              authState.error!, 
-                              style: AppTextStyles.bodyMd.copyWith(color: AppColors.error), 
+                              authState.error!,
+                              style: AppTextStyles.bodyMd.copyWith(color: AppColors.error),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: AppSpacing.stackGap),
@@ -126,8 +117,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 TextField(
                                   controller: _passCtrl,
                                   style: AppTextStyles.bodyLg.copyWith(color: AppColors.onSurface),
-                                  decoration: const InputDecoration(labelText: 'Password', hintText: '••••••'),
-                                  obscureText: true,
+                                  decoration: InputDecoration(
+                                    labelText: 'Password',
+                                    hintText: '••••••',
+                                    suffixIcon: IconButton(
+                                      icon: Icon(_visibleText.value ? Icons.visibility : Icons.visibility_off, color: AppColors.primary),
+                                      onPressed: () {
+                                        setState(() {
+                                          _visibleText.value = !_visibleText.value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  obscureText: !_visibleText.value,
                                 ),
                               ],
                             ),
@@ -144,16 +146,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 child: const Text('Begin'),
                               ),
                             ),
-                            
+
                           const SizedBox(height: AppSpacing.stackGap),
                           TextButton(
                             onPressed: () => context.pop(),
                             child: Text(
-                              'Return to the Void', 
-                              style: AppTextStyles.bodyMd.copyWith(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              'Return to the Void',
+                              style: AppTextStyles.bodyMd.copyWith(color: AppColors.primary, fontWeight: FontWeight.w600),
                             ),
                           ),
                         ],
