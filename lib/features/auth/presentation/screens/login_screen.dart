@@ -14,13 +14,13 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _emailCtrl = TextEditingController();
+  final _nicknameCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
   final _visibleText = ValueNotifier(false);
 
   @override
   void dispose() {
-    _emailCtrl.dispose();
+    _nicknameCtrl.dispose();
     _passCtrl.dispose();
     _visibleText.dispose();
     super.dispose();
@@ -98,10 +98,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                             ),
                             child: TextField(
-                              controller: _emailCtrl,
+                              controller: _nicknameCtrl,
                               style: AppTextStyles.bodyLg.copyWith(color: AppColors.onSurface),
-                              decoration: const InputDecoration(labelText: 'Email', hintText: 'ghost@void.com'),
-                              keyboardType: TextInputType.emailAddress,
+                              decoration: const InputDecoration(labelText: 'Nickname', hintText: 'Ghost'),
                             ),
                           ),
                           const SizedBox(height: AppSpacing.stackGap),
@@ -141,7 +140,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sectionGap),
                               child: FilledButton(
-                                onPressed: () => ref.read(authProvider.notifier).login(_emailCtrl.text, _passCtrl.text),
+                                onPressed: () => ref.read(authProvider.notifier).login(_nicknameCtrl.text, _passCtrl.text),
                                 child: const Text('Unlock'),
                               ),
                             ),

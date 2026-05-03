@@ -6,6 +6,9 @@ import '../../../../core/constants/app_routes.dart';
 import '../../../../core/theme/theme.dart';
 import '../providers/auth_notifier.dart';
 
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
@@ -14,18 +17,44 @@ class RegisterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
-  final _emailCtrl = TextEditingController();
-  final _userCtrl = TextEditingController();
+  final _nicknameCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
   final _visibleText = ValueNotifier(false);
+  File? _selectedImage;
 
   @override
   void dispose() {
-    _emailCtrl.dispose();
-    _userCtrl.dispose();
+    _nicknameCtrl.dispose();
     _passCtrl.dispose();
     _visibleText.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  void _handleRegister() {
+    final nickname = _nicknameCtrl.text.trim();
+    final password = _passCtrl.text.trim();
+
+    if (nickname.length < 3 || nickname.length > 15) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Nickname must be 3-15 characters')));
+      return;
+    }
+
+    if (password.length < 6 || password.length > 20) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Password must be 6-20 characters')));
+      return;
+    }
+
+    ref.read(authProvider.notifier).register(nickname, password, _selectedImage);
   }
 
   @override
@@ -101,17 +130,40 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             ),
                             child: Column(
                               children: [
-                                TextField(
-                                  controller: _userCtrl,
-                                  style: AppTextStyles.bodyLg.copyWith(color: AppColors.onSurface),
-                                  decoration: const InputDecoration(labelText: 'Alias', hintText: 'Ghost'),
+                                // Image Picker Section
+                                Center(
+                                  child: GestureDetector(
+                                    onTap: _pickImage,
+                                    child: Stack(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 40,
+                                          backgroundColor: AppColors.primary.withValues(alpha: 0.2),
+                                          backgroundImage: _selectedImage != null ? FileImage(_selectedImage!) : null,
+                                          child: _selectedImage == null
+                                              ? const Icon(Icons.add_a_photo_outlined, color: AppColors.primary, size: 30)
+                                              : null,
+                                        ),
+                                        if (_selectedImage != null)
+                                          Positioned(
+                                            right: 0,
+                                            bottom: 0,
+                                            child: Container(
+                                              padding: const EdgeInsets.all(4),
+                                              decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
+                                              child: const Icon(Icons.edit, size: 12, color: Colors.white),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                const SizedBox(height: AppSpacing.stackGap),
+                                const SizedBox(height: AppSpacing.lg),
                                 TextField(
-                                  controller: _emailCtrl,
+                                  controller: _nicknameCtrl,
                                   style: AppTextStyles.bodyLg.copyWith(color: AppColors.onSurface),
-                                  decoration: const InputDecoration(labelText: 'Email', hintText: 'ghost@void.com'),
-                                  keyboardType: TextInputType.emailAddress,
+                                  decoration: const InputDecoration(labelText: 'Nickname', hintText: 'Ghost', counterText: '3-15 characters'),
+                                  maxLength: 15,
                                 ),
                                 const SizedBox(height: AppSpacing.stackGap),
                                 TextField(
@@ -141,10 +193,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           else
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sectionGap),
-                              child: FilledButton(
-                                onPressed: () => ref.read(authProvider.notifier).register(_emailCtrl.text, _userCtrl.text, _passCtrl.text),
-                                child: const Text('Begin'),
-                              ),
+                              child: FilledButton(onPressed: _handleRegister, child: const Text('Begin')),
                             ),
 
                           const SizedBox(height: AppSpacing.stackGap),

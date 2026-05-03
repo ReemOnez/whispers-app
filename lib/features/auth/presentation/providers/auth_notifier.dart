@@ -1,7 +1,19 @@
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/auth_user.dart';
-import '../../../../core/constants/app_constants.dart';
+import '../../domain/repositories/auth_repository.dart';
+import '../../data/repositories/auth_repository_impl.dart';
 
+// Repositories & Auth Status Providers
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  return AuthRepositoryImpl();
+});
+
+final authStateProvider = StreamProvider<AuthUser?>((ref) {
+  return ref.watch(authRepositoryProvider).authStateChanges;
+});
+
+// State class
 class AuthState {
   const AuthState({this.user, this.isLoading = false, this.error});
   final AuthUser? user;
@@ -19,50 +31,51 @@ class AuthState {
   }
 }
 
+// Notifier
 class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier() : super(const AuthState());
+  final AuthRepository _repository;
 
-  Future<void> login(String email, String password) async {
+  AuthNotifier(this._repository) : super(const AuthState()) {
+    _init();
+  }
+
+  Future<void> _init() async {
+    final user = await _repository.getCurrentUser();
+    state = state.copyWith(user: user);
+  }
+
+  Future<void> login(String nickname, String password) async {
     state = state.copyWith(isLoading: true, error: null);
-    await Future.delayed(const Duration(seconds: 2)); // Mock delay
-    
-    if (email.isNotEmpty && password.length >= 6) {
-      state = AuthState(
-        user: const AuthUser(
-          id: AppConstants.dummyUserId,
-          email: AppConstants.dummyEmail,
-          username: AppConstants.dummyUsername,
-        ),
-      );
-    } else {
-      state = state.copyWith(isLoading: false, error: 'Invalid credentials. Use any email and a 6+ char password.');
+    try {
+      final user = await _repository.login(nickname: nickname, password: password);
+      state = AuthState(user: user);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
-  Future<void> register(String email, String username, String password) async {
+  Future<void> register(String nickname, String password, File? image) async {
     state = state.copyWith(isLoading: true, error: null);
-    await Future.delayed(const Duration(seconds: 2)); // Mock delay
-    
-    if (email.isNotEmpty && username.isNotEmpty && password.length >= 6) {
-      state = AuthState(
-        user: AuthUser(
-          id: AppConstants.dummyUserId,
-          email: email,
-          username: username,
-        ),
+    try {
+      final user = await _repository.register(
+        nickname: nickname, 
+        password: password,
+        profileImage: image,
       );
-    } else {
-      state = state.copyWith(isLoading: false, error: 'All fields required. Password 6+ chars.');
+      state = AuthState(user: user);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   Future<void> logout() async {
     state = state.copyWith(isLoading: true);
-    await Future.delayed(const Duration(seconds: 1));
+    await _repository.logout();
     state = const AuthState();
   }
 }
 
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  return AuthNotifier();
+  final repository = ref.watch(authRepositoryProvider);
+  return AuthNotifier(repository);
 });

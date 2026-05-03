@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_routes.dart';
 import '../../../../core/theme/theme.dart';
 import '../widgets/onboarding_page.dart';
+import '../providers/onboarding_provider.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
@@ -21,6 +23,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
+  void _finishOnboarding() {
+    ref.read(onboardingProvider.notifier).completeOnboarding();
+    context.go(AppRoutes.login);
+  }
+
   void _nextPage() {
     if (_currentPage < 2) {
       _pageController.nextPage(
@@ -28,7 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeOutCubic,
       );
     } else {
-      context.go(AppRoutes.login);
+      _finishOnboarding();
     }
   }
 
@@ -145,7 +152,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               top: AppSpacing.sm,
               right: AppSpacing.stackGap,
               child: TextButton(
-                onPressed: () => context.go(AppRoutes.login),
+                onPressed: _finishOnboarding,
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.ghostText,
                 ),

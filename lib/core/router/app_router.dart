@@ -15,11 +15,14 @@ import '../../features/write/presentation/screens/write_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../shell/app_shell.dart';
 
+import '../../features/onboarding/presentation/providers/onboarding_provider.dart';
+
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 final shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
+  final hasSeenOnboarding = ref.watch(onboardingProvider);
 
   return GoRouter(
     navigatorKey: rootNavigatorKey,
@@ -31,14 +34,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final isRegister = state.matchedLocation == AppRoutes.register;
       final isOnboarding = state.matchedLocation == AppRoutes.onboarding;
       
-      // Let splash play out first, it handles its own nav
+      // Let splash play out first
       if (isSplash) return null;
 
-      if (!isAuth && !isLogin && !isRegister && !isOnboarding) {
-        return AppRoutes.onboarding;
+      if (!isAuth) {
+        // Not authenticated
+        if (!hasSeenOnboarding) {
+          // New guest: Must see onboarding
+          if (isOnboarding) return null;
+          return AppRoutes.onboarding;
+        } else {
+          // Guest who seen onboarding: Can access login/register
+          if (isLogin || isRegister || isOnboarding) return null;
+          return AppRoutes.login;
+        }
       }
       
-      if (isAuth && (isLogin || isRegister || isOnboarding)) {
+      // Authenticated
+      if (isLogin || isRegister || isOnboarding) {
         return AppRoutes.home;
       }
 
